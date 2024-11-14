@@ -114,7 +114,27 @@ void onMqttConnect(bool sessionPresent) {
 	mqttClient.subscribe("jas/tap", 0); // QoS level 0
 }
 
+void turnOff() {
+  strip.clear(); // Clear all pixel data
+  strip.show();  // Send the "off" command to the LEDs
+}
 
+void accessGranted() {
+  strip.fill(strip.Color(0, 255, 0)); // Fill all LEDs with green
+  strip.show();
+  delay(1000);                        // Hold the green color for 1 second
+  strip.clear();                      // Turn off LEDs
+  strip.show();
+}
+
+// Function to display "Access Denied" animation with red color
+void accessDenied() {
+  strip.fill(strip.Color(255, 0, 0)); // Fill all LEDs with green
+  strip.show();
+  delay(1000);                        // Hold the green color for 1 second
+  strip.clear();                      // Turn off LEDs
+  strip.show();
+}
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
     // Only handle messages on the "jas/tap" topic
@@ -156,25 +176,23 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 #endif
 
         // Control relay and light based on the received message
+		Serial.println("======= BEFORE LOOP");
         if (access) {
-            if (color == "green") {
-                // Turn on the light (green color)
-                // digitalWrite(LIGHT_PIN, HIGH);
-                // Activate the relay
-                // digitalWrite(RELAY_PIN, HIGH);
-            } else {
-                // If the color is not green, turn off the light
-                // digitalWrite(LIGHT_PIN, LOW);
-                // Deactivate the relay
-                // digitalWrite(RELAY_PIN, LOW);
-            }
-
-            // Keep the light and relay on for the duration specified
-            delay(duration);
-
-            // Turn off the light and relay after the duration
-            // digitalWrite(LIGHT_PIN, LOW);
-            // digitalWrite(RELAY_PIN, LOW);
-        }
+			Serial.println("======= IN ACCESS");
+			accessGranted();
+			delay(1000);
+            
+        }else{
+			// Do something when no access
+			Serial.println("======= IN DINIED");
+			// if (color == "green") {
+			// 	Serial.println("======= IN GREEN");
+            //     accessGranted();
+            // } else {
+            //     accessDenied();
+            // }
+			accessDenied();
+			delay(1000);
+		}
     }
 }

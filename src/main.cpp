@@ -38,6 +38,9 @@ SOFTWARE.
 #include <AsyncMqttClient.h>
 #include <Bounce2.h>
 
+#include <Adafruit_NeoPixel.h>
+
+
  #define DEBUG
 
 #ifdef OFFICIALBOARD
@@ -141,6 +144,13 @@ int timeZone;
 unsigned long nextbeat = 0;
 unsigned long interval = 1800;
 
+#define LED_PIN    5             // Pin where LED data line is connected
+#define NUM_LEDS   24            // Number of LEDs in the ring
+#define BRIGHTNESS 5 
+
+Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+
 #include "log.esp"
 #include "mqtt.esp"
 #include "helpers.esp"
@@ -153,6 +163,10 @@ unsigned long interval = 1800;
 
 void ICACHE_FLASH_ATTR setup()
 {
+
+	strip.begin();
+	strip.setBrightness(BRIGHTNESS); // Set brightness level
+	strip.show();     
 #ifdef OFFICIALBOARD
 	// Set relay pin to LOW signal as early as possible
 	pinMode(13, OUTPUT);
