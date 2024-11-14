@@ -29,6 +29,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #endif
 		MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
 		type = mfrc522.PICC_GetTypeName(piccType);
+
 #ifdef DEBUG
 		Serial.print(" " + type);
 #endif
@@ -44,6 +45,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 			uid = String(wg.getCode(), DEC);
 			type = String(wg.getWiegandType(), DEC);
 			cooldown = millis() + 2000;
+			
 		}
 		else
 		{
@@ -93,6 +95,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 			Serial.print(F("[ INFO ] PICC's UID: "));
 			Serial.print(uid);
 #endif
+		
 		}
 		else
 		{
@@ -313,8 +316,18 @@ void ICACHE_FLASH_ATTR rfidloop()
 		writeEvent("WARN", "rfid", "Unknown rfid tag is scanned", data);
 		writeLatest(uid, "Unknown", 98);
 #ifdef DEBUG
+		
 		Serial.println(" = unknown PICC");
+		Serial.println("==============");
+		
+		
 #endif
+		digitalWrite(16, HIGH);
+		delay(50);
+		digitalWrite(16, LOW);
+
+	
+
 		DynamicJsonBuffer jsonBuffer;
 		JsonObject &root = jsonBuffer.createObject();
 		root["command"] = "piccscan";
