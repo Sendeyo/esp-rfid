@@ -200,6 +200,7 @@ bool ICACHE_FLASH_ATTR loadConfiguration()
 		mqttClient.onDisconnect(onMqttDisconnect);
 		mqttClient.onPublish(onMqttPublish);
 		mqttClient.onConnect(onMqttConnect);
+		mqttClient.onMessage(onMqttMessage);
 #ifdef DEBUG
 		Serial.println("[ INFO ] try to call mqttconnect ");
 #endif

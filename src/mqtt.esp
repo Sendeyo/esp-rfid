@@ -111,4 +111,70 @@ void onMqttConnect(bool sessionPresent) {
 		writeEvent("INFO", "mqtt", "Connected to MQTT Server", "Session Present");
 	}
 	mqtt_publish_boot(now(), WiFi.SSID(), WiFi.localIP().toString());
+	mqttClient.subscribe("jas/tap", 0); // QoS level 0
+}
+
+
+
+void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+    // Only handle messages on the "jas/tap" topic
+    if (strcmp(topic, "jas/tap") == 0) {
+        // Convert payload to String
+        String payloadStr = String(payload);
+
+        // Debug print to see the incoming message
+#ifdef DEBUG
+        Serial.println("[ INFO ] Received MQTT Message: ");
+        Serial.println(payloadStr);
+#endif
+
+        // Create a JSON object to parse the message
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject& root = jsonBuffer.parseObject(payloadStr);
+
+        if (!root.success()) {
+            Serial.println("Failed to parse the message!");
+            return;
+        }
+
+        // Extract the values from the JSON object
+        String device = root["device"];
+        bool access = root["access"];
+        String color = root["color"];
+        int duration = root["duration"];
+
+        // Debug print parsed values
+#ifdef DEBUG
+        Serial.print("[ INFO ] Device: ");
+        Serial.println(device);
+        Serial.print("[ INFO ] Access: ");
+        Serial.println(access ? "true" : "false");
+        Serial.print("[ INFO ] Color: ");
+        Serial.println(color);
+        Serial.print("[ INFO ] Duration: ");
+        Serial.println(duration);
+#endif
+
+        // Control relay and light based on the received message
+        if (access) {
+            if (color == "green") {
+                // Turn on the light (green color)
+                // digitalWrite(LIGHT_PIN, HIGH);
+                // Activate the relay
+                // digitalWrite(RELAY_PIN, HIGH);
+            } else {
+                // If the color is not green, turn off the light
+                // digitalWrite(LIGHT_PIN, LOW);
+                // Deactivate the relay
+                // digitalWrite(RELAY_PIN, LOW);
+            }
+
+            // Keep the light and relay on for the duration specified
+            delay(duration);
+
+            // Turn off the light and relay after the duration
+            // digitalWrite(LIGHT_PIN, LOW);
+            // digitalWrite(RELAY_PIN, LOW);
+        }
+    }
 }
