@@ -119,22 +119,40 @@ void turnOff() {
   strip.show();  // Send the "off" command to the LEDs
 }
 
+unsigned long accessStartTime = 0; // Tracks when access was granted
+bool accessActive = false;         // Indicates if the "access granted" state is active
+
 void accessGranted() {
-  strip.fill(strip.Color(0, 255, 0)); // Fill all LEDs with green
-  strip.show();
-  delay(1000);                        // Hold the green color for 1 second
-  strip.clear();                      // Turn off LEDs
-  strip.show();
+    strip.fill(strip.Color(0, 255, 0)); // Fill all LEDs with green
+    strip.show();
+    accessStartTime = millis();        // Record the start time
+    accessActive = true;               // Set the active state
 }
 
 // Function to display "Access Denied" animation with red color
 void accessDenied() {
-  strip.fill(strip.Color(255, 0, 0)); // Fill all LEDs with green
-  strip.show();
-  delay(1000);                        // Hold the green color for 1 second
-  strip.clear();                      // Turn off LEDs
-  strip.show();
+	strip.fill(strip.Color(255, 0, 0)); // Fill all LEDs with green
+	strip.show();
+	accessStartTime = millis();        // Record the start time
+	accessActive = true;  
 }
+
+void accessBlue() {
+	strip.fill(strip.Color(0, 0, 255)); // Fill all LEDs with green
+	strip.show();
+	accessStartTime = millis();        // Record the start time
+	accessActive = true;  
+}
+
+
+void updateAccessState() {
+    if (accessActive && (millis() - accessStartTime >= 1000)) { // Check if 1 second has passed
+        strip.clear();               // Clear the LEDs
+        strip.show();                // Send the "off" command
+        accessActive = false;        // Reset the state
+    }
+}
+
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
     // Only handle messages on the "jas/tap" topic
@@ -176,23 +194,18 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 #endif
 
         // Control relay and light based on the received message
-		Serial.println("======= BEFORE LOOP");
         if (access) {
 			Serial.println("======= IN ACCESS");
-			accessGranted();
-			delay(1000);
-            
+			accessGranted();            
         }else{
 			// Do something when no access
 			Serial.println("======= IN DINIED");
-			// if (color == "green") {
-			// 	Serial.println("======= IN GREEN");
-            //     accessGranted();
-            // } else {
-            //     accessDenied();
-            // }
-			accessDenied();
-			delay(1000);
+			if (color == "red") {
+				Serial.println("======= Red");
+                accessDenied();
+            } else {
+                accessBlue();
+            }
 		}
     }
 }

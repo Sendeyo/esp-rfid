@@ -146,7 +146,7 @@ unsigned long interval = 1800;
 
 #define LED_PIN    5             // Pin where LED data line is connected
 #define NUM_LEDS   24            // Number of LEDs in the ring
-#define BRIGHTNESS 5 
+#define BRIGHTNESS 255 
 
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -241,6 +241,8 @@ void ICACHE_RAM_ATTR loop()
 	deltaTime = currentMillis - previousLoopMillis;
 	uptime = NTP.getUptimeSec();
 	previousLoopMillis = currentMillis;
+
+	updateAccessState();
 
 	button.update();
 	if (button.fell()) 
