@@ -1,0 +1,10 @@
+AsyncMqttClient
+Bounce2@2.52
+https://github.com/monkeyboard/Wiegand-Protocol-Library-for-Arduino.git
+ArduinoJson@5.13.4
+ESPAsyncUDP
+adafruit/Adafruit NeoPixel@1.2.5
+https://github.com/miguelbalboa/rfid#ea7ee3f3daafd46d0c5b8438ba41147c384a1f0d
+Time@1.5
+ESPAsyncTCP
+ESP Async WebServer

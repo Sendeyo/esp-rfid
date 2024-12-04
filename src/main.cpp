@@ -41,7 +41,7 @@ SOFTWARE.
 #include <Adafruit_NeoPixel.h>
 
 
- #define DEBUG
+//  #define DEBUG
 
 #ifdef OFFICIALBOARD
 

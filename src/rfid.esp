@@ -16,7 +16,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 			return;
 		}
 		mfrc522.PICC_HaltA();
-		cooldown = millis() + 2000;
+		cooldown = millis() + 200;
 #ifdef DEBUG
 		Serial.print(F("[ INFO ] PICC's UID: "));
 #endif
@@ -44,7 +44,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #endif
 			uid = String(wg.getCode(), DEC);
 			type = String(wg.getWiegandType(), DEC);
-			cooldown = millis() + 2000;
+			cooldown = millis() + 200;
 			
 		}
 		else
@@ -71,7 +71,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #ifdef DEBUG
 			Serial.print(uid);
 #endif
-			cooldown = millis() + 2000;
+			cooldown = millis() + 200;
 		}
 		else
 		{
@@ -90,7 +90,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 		{
 			uid = RFIDr.GetHexID();
 			type = RFIDr.GetTagType();
-			cooldown = millis() + 2000;
+			cooldown = millis() + 200;
 #ifdef DEBUG
 			Serial.print(F("[ INFO ] PICC's UID: "));
 			Serial.print(uid);
@@ -119,7 +119,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 				return;
 			}
 			mfrc522.PICC_HaltA();
-			cooldown = millis() + 2000;
+			cooldown = millis() + 200;
 #ifdef DEBUG
 			Serial.print(F("[ INFO ] PICC's UID: "));
 #endif
@@ -147,7 +147,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #endif
 				uid = String(wg.getCode(), DEC);
 				type = String(wg.getWiegandType(), DEC);
-				cooldown = millis() + 2000;
+				cooldown = millis() + 200;
 			}
 			else
 			{
@@ -174,7 +174,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #ifdef DEBUG
 				Serial.print(uid);
 #endif
-				cooldown = millis() + 2000;
+				cooldown = millis() + 200;
 			}
 			else
 			{
@@ -199,7 +199,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 #endif
 		uid = String(wg.getCode(), DEC);
 		type = String(wg.getWiegandType(), HEX);
-		cooldown = millis() + 2000;
+		cooldown = millis() + 200;
 	}
 	else
 	{
