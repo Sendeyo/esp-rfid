@@ -121,11 +121,14 @@ void turnOff() {
 
 unsigned long accessStartTime = 0; // Tracks when access was granted
 bool accessActive = false;         // Indicates if the "access granted" state is active
+unsigned long accessDuration = 0; // Stores the duration for the active state
 
-void accessGranted() {
+
+void accessGranted(unsigned long duration) {
     strip.fill(strip.Color(0, 255, 0)); // Fill all LEDs with green
     strip.show();
     accessStartTime = millis();        // Record the start time
+	accessDuration = duration;  
     accessActive = true;               // Set the active state
 }
 
@@ -134,6 +137,7 @@ void accessDenied() {
 	strip.fill(strip.Color(255, 0, 0)); // Fill all LEDs with green
 	strip.show();
 	accessStartTime = millis();        // Record the start time
+	
 	accessActive = true;  
 }
 
@@ -146,7 +150,7 @@ void accessBlue() {
 
 
 void updateAccessState() {
-    if (accessActive && (millis() - accessStartTime >= 1000)) { // Check if 1 second has passed
+    if (accessActive && (millis() - accessStartTime >= accessDuration)) { // Check if 1 second has passed
         strip.clear();               // Clear the LEDs
         strip.show();                // Send the "off" command
         accessActive = false;        // Reset the state
@@ -196,7 +200,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         // Control relay and light based on the received message
         if (access) {
 			Serial.println("======= IN ACCESS");
-			accessGranted();            
+			accessGranted(duration);            
         }else{
 			// Do something when no access
 			Serial.println("======= IN DINIED");
