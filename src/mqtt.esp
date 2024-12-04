@@ -124,13 +124,18 @@ bool accessActive = false;         // Indicates if the "access granted" state is
 unsigned long accessDuration = 0; // Stores the duration for the active state
 
 
-void light(const String& rgb, unsigned long duration) {
+void Notify(const String& rgb, unsigned long duration, bool sound) {
 	int red = rgb.substring(0, 3).toInt();
     int green = rgb.substring(3, 6).toInt();
     int blue = rgb.substring(6, 9).toInt();
 
     strip.fill(strip.Color(red, green, blue)); // Fill all LEDs with green
     strip.show();
+
+	if (sound) {
+        digitalWrite(16, HIGH); // Turn on the buzzer
+    }
+
     accessStartTime = millis();        // Record the start time
 	accessDuration = duration;  
     accessActive = true;               // Set the active state
@@ -143,6 +148,7 @@ void updateAccessState() {
     if (accessActive && (millis() - accessStartTime >= accessDuration)) { // Check if 1 second has passed
         strip.clear();               // Clear the LEDs
         strip.show();                // Send the "off" command
+		digitalWrite(16, LOW); // Turn off the buzzer
         accessActive = false;        // Reset the state
     }
 }
@@ -174,6 +180,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         bool access = root["access"];
         String color = root["color"];
         int duration = root["duration"];
+		bool sound = root["sound"];
+
 
         // Debug print parsed values
 #ifdef DEBUG
@@ -185,21 +193,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         Serial.println(color);
         Serial.print("[ INFO ] Duration: ");
         Serial.println(duration);
+		Serial.print("[ INFO ] Sound: ");
+        Serial.println(sound);
 #endif
 
         // Control relay and light based on the received message
-        if (access) {
-			Serial.println("======= IN ACCESS");
-			light(color, duration);            
-        }else{
-			// Do something when no access
-			Serial.println("======= IN DINIED");
-			if (color == "red") {
-				Serial.println("======= Red");
-                light(color, duration);
-            } else {
-                light(color, duration);
-            }
-		}
+        Notify(color, duration, sound);
     }
 }
