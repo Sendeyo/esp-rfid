@@ -124,8 +124,12 @@ bool accessActive = false;         // Indicates if the "access granted" state is
 unsigned long accessDuration = 0; // Stores the duration for the active state
 
 
-void accessGranted(unsigned long duration) {
-    strip.fill(strip.Color(0, 255, 0)); // Fill all LEDs with green
+void light(const String& rgb, unsigned long duration) {
+	int red = rgb.substring(0, 3).toInt();
+    int green = rgb.substring(3, 6).toInt();
+    int blue = rgb.substring(6, 9).toInt();
+
+    strip.fill(strip.Color(red, green, blue)); // Fill all LEDs with green
     strip.show();
     accessStartTime = millis();        // Record the start time
 	accessDuration = duration;  
@@ -133,20 +137,6 @@ void accessGranted(unsigned long duration) {
 }
 
 // Function to display "Access Denied" animation with red color
-void accessDenied() {
-	strip.fill(strip.Color(255, 0, 0)); // Fill all LEDs with green
-	strip.show();
-	accessStartTime = millis();        // Record the start time
-	
-	accessActive = true;  
-}
-
-void accessBlue() {
-	strip.fill(strip.Color(0, 0, 255)); // Fill all LEDs with green
-	strip.show();
-	accessStartTime = millis();        // Record the start time
-	accessActive = true;  
-}
 
 
 void updateAccessState() {
@@ -200,15 +190,15 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         // Control relay and light based on the received message
         if (access) {
 			Serial.println("======= IN ACCESS");
-			accessGranted(duration);            
+			light(color, duration);            
         }else{
 			// Do something when no access
 			Serial.println("======= IN DINIED");
 			if (color == "red") {
 				Serial.println("======= Red");
-                accessDenied();
+                light(color, duration);
             } else {
-                accessBlue();
+                light(color, duration);
             }
 		}
     }
