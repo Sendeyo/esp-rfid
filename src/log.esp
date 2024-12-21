@@ -1,4 +1,5 @@
 void ICACHE_FLASH_ATTR writeEvent(String type, String src, String desc, String data) {
+	if (mqttenabled == 1){
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	root["type"] = type;
@@ -10,9 +11,11 @@ void ICACHE_FLASH_ATTR writeEvent(String type, String src, String desc, String d
 	root.printTo(eventlog);
 	eventlog.print("\n");
 	eventlog.close();
+	}
 }
 
 void ICACHE_FLASH_ATTR writeLatest(String uid, String username, int acctype) {
+	if (mqttenabled == 1){
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	root["uid"] = uid;
@@ -23,9 +26,11 @@ void ICACHE_FLASH_ATTR writeLatest(String uid, String username, int acctype) {
 	root.printTo(latestlog);
 	latestlog.print("\n");
 	latestlog.close();
+	}
 }
 
 void ICACHE_FLASH_ATTR sendEventLog(int page) {
+	if (mqttenabled == 1){
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	root["command"] = "eventlist";
@@ -54,8 +59,10 @@ void ICACHE_FLASH_ATTR sendEventLog(int page) {
 		ws.textAll("{\"command\":\"result\",\"resultof\":\"eventlist\",\"result\": true}");
 	}
 }
+}
 
 void ICACHE_FLASH_ATTR sendLatestLog(int page) {
+	if (mqttenabled == 1){
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	root["command"] = "latestlist";
@@ -82,5 +89,6 @@ void ICACHE_FLASH_ATTR sendLatestLog(int page) {
 		root.printTo((char *)buffer->get(), len + 1);
 		ws.textAll(buffer);
 		ws.textAll("{\"command\":\"result\",\"resultof\":\"latestlist\",\"result\": true}");
+	}
 	}
 }
